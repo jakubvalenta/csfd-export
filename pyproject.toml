@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "csfd-export"
+version = "0.1.0"
+description = "A website that allows you to export your ČSFD film ratings."
+authors = ["Jakub Valenta <jakub@jakubvalenta.cz>"]
+license = "GPLv3+"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = "^5.1.1"
+beautifulsoup4 = "^4.12.3"
+requests = "^2.32.3"
+
+[tool.poetry.group.dev.dependencies]
+flake8-pydocstyle = "^0.2.4"
+Flake8-pyproject = "^1.2.3"
+flake8-pytest-style = "^2.0.0"
+isort = "^5.13.2"
+mypy = "^1.11.2"
+pytest = "^8.3.3"
+types-requests = "^2.32.0.20240914"
+
+[tool.flake8]
+extend-ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D107", "PT009"]
+max-line-length = 100
+
+[tool.isort]
+profile = "django"
+line_length = 100
+skip = ["migrations"]
+
+[tool.mypy]
+exclude = ["/migrations/"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
