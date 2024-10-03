@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ exception }}</title>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      href="{% static 'csfd_export/main.css' %}"
+      type="text/css"
+      media="screen"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <main>
+        <div class="container">
+          <h1>{{ exception }}</h1>
+          <p>
+            <a href="{% url 'index' %}" class="button">Go back</a>
+          </p>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

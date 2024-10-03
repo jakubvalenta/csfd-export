@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ČSFD Export</title>
+    <meta
+      name="description"
+      content="Export your film ratings as a spreadsheet file."
+    />
+    {% load static %}
+    <link
+      rel="stylesheet"
+      href="{% static 'csfd_export/main.css' %}"
+      type="text/css"
+      media="screen"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <main>
+        <div class="container">
+          <h1 class="border-highlight">ČSFD Export</h1>
+          <p>Export your film ratings as a spreadsheet file.</p>
+          <p>
+            The resulting file is a CSV, which can be
+            <a
+              href="https://letterboxd.com/about/importing-data/"
+              target="_blank"
+              rel="noopener"
+              >imported to Letterboxd</a
+            >.
+          </p>
+          <form method="post" id="form">
+            {% csrf_token %}
+            <p>
+              <label for="{{ form.uid.id_for_label }}"
+                >{{ form.uid.label }}</label
+              >
+            </p>
+            <p class="d-flex">
+              {{ form.uid }}
+              <input
+                type="submit"
+                value="Export"
+                class="button background-highlight border-highlight"
+              />
+            </p>
+            {{ form.uid.errors }} {{ form.non_field_errors }}
+          </form>
+        </div>
+      </main>
+      <footer>
+        <a href="https://www.jakubvalenta.cz/" target="_blank" rel="noreferrer"
+          >Jakub Valenta</a
+        >
+        2024
+        <a
+          href="https://github.com/jakubvalenta/csfd-export"
+          target="_blank"
+          rel="noreferrer"
+          >code</a
+        >
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,8 +1,11 @@
-# OpenStreetMap Changesets
+# ČSFD Export
 
-A website that allows you to export your ČSFD film ratings.
+Export your film ratings as a spreadsheet file.
 
-You can find it at [csfd-export.ooooo.page](https://csfd-export.ooooo.page).
+The resulting file is a CSV, which can be
+[https://letterboxd.com/about/importing-data/](imported to Letterboxd).
+
+You can find the app at: [csfd-export.ooooo.page](https://csfd-export.ooooo.page).
 
 ## Installation
 

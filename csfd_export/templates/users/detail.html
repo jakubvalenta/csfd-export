@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ČSFD Export of user {{ uid }}</title>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      href="{% static 'csfd_export/main.css' %}"
+      type="text/css"
+      media="screen"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <main>
+        <div class="container">
+          <h2 class="border-success">Here is your ČSFD profile export</h2>
+          <p>
+            <a
+              href="data:text/plain;charset=utf-8,{{ csv|iriencode }}"
+              download="csfd_export_{{ uid }}.csv"
+              class="button background-success border-success"
+              >Download as CSV</a
+            >
+            <button
+              onclick="navigator.clipboard.writeText(document.getElementById('csv').textContent).then()"
+              class="button background-success border-success"
+            >
+              Copy to clipboard
+            </button>
+            <a href="{% url 'index' %}" class="button">Go back</a>
+          </p>
+          <pre id="csv" class="box background-muted flex-grow mr-1-desktop">
+{{ csv }}</pre
+          >
+        </div>
+      </main>
+      <footer>
+        <a href="https://www.jakubvalenta.cz/" target="_blank" rel="noreferrer"
+          >Jakub Valenta</a
+        >
+        2024
+        <a
+          href="https://github.com/jakubvalenta/csfd-export"
+          target="_blank"
+          rel="noreferrer"
+          >code</a
+        >
+      </footer>
+    </div>
+  </body>
+</html>

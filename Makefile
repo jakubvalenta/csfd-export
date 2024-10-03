@@ -8,6 +8,10 @@ run:  ## Start the development server
 setup:  ## Install Python dependencies
 	poetry install
 
+.PHONE: test
+test:  ## Test Python code
+	poetry run pytest $(_python_pkg)
+
 .PHONE: lint
 lint:  ## Lint Python code
 	poetry run flake8 $(_python_pkg)
