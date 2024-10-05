@@ -1,16 +1,11 @@
-import io
-
-from django.conf import settings
-from django.core.cache import caches
-from django.http import Http404, HttpRequest, HttpResponse
+from celery.result import AsyncResult
+from django.core.cache import cache
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from requests import HTTPError
 
 from csfd_export.forms import UserForm
-from csfd_export.scraper import download_ratings_pages, parse_ratings_pages, write_ratings_csv
-
-cache = caches["default"]
+from csfd_export.tasks import scrape_user_ratings
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -24,22 +19,17 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def user_detail(request: HttpRequest, *, uid: int) -> HttpResponse:
-    cache_key = f"user:{uid}:csv"
-    csv_str = cache.get(cache_key)
-    if csv_str is None:
-        try:
-            ratings_pages = download_ratings_pages(
-                uid,
-                interval=settings.SCRAPER_INTERVAL,
-                timeout=settings.SCRAPER_TIMEOUT,
-                user_agent=settings.SCRAPER_USER_AGENT,
-            )
-            ratings = parse_ratings_pages(ratings_pages)
-            f = io.StringIO()
-            write_ratings_csv(ratings, f)
-            f.seek(0)
-            csv_str = f.read()
-            cache.set(cache_key, csv_str, 30 * 3600)
-        except HTTPError:
-            raise Http404("ČSFD user not found")
+    cache_key = f"user:{uid}:result-id"
+    result_id = cache.get(cache_key)
+    if result_id is None:
+        result = scrape_user_ratings.delay(uid)
+        result_id = result.id
+        cache.set(cache_key, result_id, 30 * 3600)
+    else:
+        result = AsyncResult(result_id)
+    if result.ready():
+        csv_str = result.get()  # TODO Handle exceptions gracefully.
+    else:
+        result.forget()
+        csv_str = None
     return render(request, "users/detail.html", {"csv": csv_str, "uid": uid})

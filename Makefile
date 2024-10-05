@@ -4,6 +4,10 @@ _python_pkg = csfd_export
 run:  ## Start the development server
 	poetry run python manage.py runserver
 
+.PHONY: worker
+worker:  ## Start the Celery worker server
+	poetry run celery -A tasks worker --loglevel=INFO
+
 .PHONY: setup
 setup:  ## Install Python dependencies
 	poetry install
