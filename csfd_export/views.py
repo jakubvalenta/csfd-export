@@ -1,5 +1,6 @@
 import io
 
+from django.conf import settings
 from django.core.cache import caches
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
@@ -7,10 +8,7 @@ from django.urls import reverse
 from requests import HTTPError
 
 from csfd_export.forms import UserForm
-from csfd_export.scraper import (
-    DEFAULT_INTERVAL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT, download_ratings_pages,
-    parse_ratings_pages, write_ratings_csv,
-)
+from csfd_export.scraper import download_ratings_pages, parse_ratings_pages, write_ratings_csv
 
 cache = caches["default"]
 
@@ -32,10 +30,9 @@ def user_detail(request: HttpRequest, *, uid: int) -> HttpResponse:
         try:
             ratings_pages = download_ratings_pages(
                 uid,
-                # TODO Move interval, timeout and user_agent to settings.
-                interval=DEFAULT_INTERVAL,
-                timeout=DEFAULT_TIMEOUT,
-                user_agent=DEFAULT_USER_AGENT,
+                interval=settings.SCRAPER_INTERVAL,
+                timeout=settings.SCRAPER_TIMEOUT,
+                user_agent=settings.SCRAPER_USER_AGENT,
             )
             ratings = parse_ratings_pages(ratings_pages)
             f = io.StringIO()

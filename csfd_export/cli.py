@@ -2,10 +2,11 @@ import argparse
 import logging
 import sys
 
+from django.conf import settings
+
 from csfd_export import __title__
 from csfd_export.scraper import (
-    DEFAULT_INTERVAL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT, download_ratings_pages,
-    parse_ratings_pages, parse_uid, write_ratings_csv,
+    download_ratings_pages, parse_ratings_pages, parse_uid, write_ratings_csv,
 )
 
 logger = logging.getLogger(__name__)
@@ -27,22 +28,23 @@ def main():
     parser.add_argument(
         "-i",
         "--interval",
-        help=f"Number of seconds to wait between HTTP requests; defaults to {DEFAULT_INTERVAL}",
+        help="Number of seconds to wait between HTTP requests; "
+        f"defaults to {settings.SCRAPER_INTERVAL}",
         type=int,
-        default=DEFAULT_INTERVAL,
+        default=settings.SCRAPER_INTERVAL,
     )
     parser.add_argument(
         "-t",
         "--timeout",
-        help=f"HTTP request timeout in seconds; defaults to {DEFAULT_TIMEOUT}",
+        help=f"HTTP request timeout in seconds; defaults to {settings.SCRAPER_TIMEOUT}",
         type=int,
-        default=DEFAULT_TIMEOUT,
+        default=settings.SCRAPER_TIMEOUT,
     )
     parser.add_argument(
         "-u",
         "--user-agent",
-        help=f"User-Agent header; defaults to {DEFAULT_USER_AGENT}",
-        default=DEFAULT_USER_AGENT,
+        help=f"User-Agent header; defaults to {settings.SCRAPER_USER_AGENT}",
+        default=settings.SCRAPER_USER_AGENT,
     )
     args = parser.parse_args()
     if args.verbose:

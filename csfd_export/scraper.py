@@ -12,13 +12,6 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 logger = logging.getLogger(__name__)
 
 
-DEFAULT_INTERVAL = 1
-DEFAULT_TIMEOUT = 10
-DEFAULT_USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; rv:131.0) Gecko/20100101 Firefox/131.0"
-)
-
-
 class ParseError(Exception):
     pass
 

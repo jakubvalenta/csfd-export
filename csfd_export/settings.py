@@ -47,3 +47,9 @@ LOGGING = {
     "handlers": {"console": {"level": "INFO", "class": "logging.StreamHandler"}},
     "loggers": {"csfd_export": {"level": "INFO", "handlers": ["console"]}},
 }
+
+SCRAPER_INTERVAL = 1
+SCRAPER_TIMEOUT = 10
+SCRAPER_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; rv:131.0) Gecko/20100101 Firefox/131.0"
+)
