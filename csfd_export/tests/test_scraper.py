@@ -17,7 +17,7 @@ soup_profile = BeautifulSoup(
 def test_parse_star_classes():
     assert parse_rating(["star", "stars-5"]) == 5
     assert parse_rating(["star", "stars-1"]) == 1
-    assert parse_rating(["star", "trash"]) == 0
+    assert parse_rating(["star", "trash"]) == 0.5
     with pytest.raises(ParseError):
         parse_rating([])
     with pytest.raises(ParseError):

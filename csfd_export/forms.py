@@ -1,11 +1,7 @@
-import re
-
 from django import forms
 from django.core.exceptions import ValidationError
 
-PROFILE_URL_REGEX = re.compile(
-    r"^\s*https?://(www\.)?csfd\.cz\/uzivatel\/(?P<uid>\d+)-"
-)
+from csfd_export.scraper import ParseError, parse_uid
 
 
 class UserForm(forms.Form):
@@ -21,8 +17,7 @@ class UserForm(forms.Form):
     )
 
     def clean_uid(self):
-        profile_url = self.cleaned_data["uid"]
-        m = PROFILE_URL_REGEX.match(profile_url)
-        if m:
-            return int(m.group("uid"))
-        raise ValidationError("Invalid profile URL")
+        try:
+            parse_uid(self.cleaned_data["uid"])
+        except ParseError as e:
+            raise ValidationError(e)

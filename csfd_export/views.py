@@ -1,4 +1,3 @@
-import csv
 import io
 
 from django.core.cache import caches
@@ -8,7 +7,10 @@ from django.urls import reverse
 from requests import HTTPError
 
 from csfd_export.forms import UserForm
-from csfd_export.scraper import download_ratings_pages, parse_ratings_page
+from csfd_export.scraper import (
+    DEFAULT_INTERVAL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT, download_ratings_pages,
+    parse_ratings_pages, write_ratings_csv,
+)
 
 cache = caches["default"]
 
@@ -27,30 +29,20 @@ def user_detail(request: HttpRequest, *, uid: int) -> HttpResponse:
     cache_key = f"user:{uid}:csv"
     csv_str = cache.get(cache_key)
     if csv_str is None:
-        ratings_pages = download_ratings_pages(
-            uid,
-            # TODO Move to interval, timeout and user_agent to settings.
-            interval=2,
-            timeout=10,
-            user_agent="Mozilla/5.0 (Windows NT 10.0; rv:131.0) Gecko/20100101 Firefox/131.0",
-        )
-        f = io.StringIO()
-        writer = csv.writer(f)
-        writer.writerow(["Title", "Year", "Rating", "WatchedDate"])
         try:
-            for soup in ratings_pages:
-                for rating in parse_ratings_page(soup):
-                    writer.writerow(
-                        [
-                            rating.title_cs,
-                            rating.year,
-                            rating.rating,
-                            rating.watched_datetime.strftime("%Y-%m-%d"),
-                        ]
-                    )
+            ratings_pages = download_ratings_pages(
+                uid,
+                # TODO Move interval, timeout and user_agent to settings.
+                interval=DEFAULT_INTERVAL,
+                timeout=DEFAULT_TIMEOUT,
+                user_agent=DEFAULT_USER_AGENT,
+            )
+            ratings = parse_ratings_pages(ratings_pages)
+            f = io.StringIO()
+            write_ratings_csv(ratings, f)
+            f.seek(0)
+            csv_str = f.read()
+            cache.set(cache_key, csv_str, 30 * 3600)
         except HTTPError:
             raise Http404("ČSFD user not found")
-        f.seek(0)
-        csv_str = f.read()
-        cache.set(cache_key, csv_str, 30 * 3600)
     return render(request, "users/detail.html", {"csv": csv_str, "uid": uid})
