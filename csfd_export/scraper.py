@@ -24,6 +24,12 @@ class Rating:
     rating: float
 
 
+DEFAULT_INTERVAL = 1
+DEFAULT_TIMEOUT = 10
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; rv:131.0) Gecko/20100101 Firefox/131.0"
+)
+
 PROFILE_URL_REGEX = re.compile(
     r"^\s*https?://(www\.)?csfd\.cz\/uzivatel\/(?P<uid>\d+)-"
 )
@@ -76,7 +82,7 @@ def download_ratings_pages(
     yield first_page
     last_page_num = parse_last_page_num(first_page)
     for page_no in range(2, last_page_num + 1):
-        logger.info("Waitig for %ds", interval)
+        logger.info("Waiting for %ds", interval)
         time.sleep(interval)
         html = _download_ratings_page(uid, page_no, **http_get_kwargs)
         yield BeautifulSoup(html, "html.parser")

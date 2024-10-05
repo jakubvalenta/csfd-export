@@ -10,17 +10,12 @@ SECRET_KEY = (
     .read_text()
     .strip()
 )
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "csfd-export",
-        "USER": "robot",
-        "CONN_MAX_AGE": 300,
-    }
-}
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "cache",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "unix:///run/redis-csfd-export/redis.sock",
     }
 }
+
+CELERY_BROKER = "redis+socket:///run/redis-csfd-export/redis.sock"
+CELERY_BACKEND = "redis+socket:///run/redis-csfd-export/redis.sock"

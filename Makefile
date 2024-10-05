@@ -6,7 +6,12 @@ run:  ## Start the development server
 
 .PHONY: worker
 worker:  ## Start the Celery worker server
-	poetry run celery -A tasks worker --loglevel=INFO
+	DJANGO_SETTINGS_MODULE=csfd_export.settings \
+	poetry run celery -A csfd_export.tasks worker --loglevel=INFO
+
+.PHONY: redis
+redis:  ## Start the Redis message broker
+	redis-server --port 0 --unixsocket /run/user/1000/redis.sock
 
 .PHONY: setup
 setup:  ## Install Python dependencies

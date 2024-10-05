@@ -16,8 +16,8 @@ class UserForm(forms.Form):
         required=True,
     )
 
-    def clean_uid(self):
+    def clean_uid(self) -> int:
         try:
-            parse_uid(self.cleaned_data["uid"])
+            return parse_uid(self.cleaned_data["uid"])
         except ParseError as e:
             raise ValidationError(e)

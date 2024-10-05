@@ -82,11 +82,23 @@ $ make setup
 
 ### Usage
 
-Start a development server
+1. Start the Redis message broker:
 
-```shell
-$ make run
-```
+    ```shell
+    $ make redis
+    ```
+
+2. Start the Celery worker:
+
+    ```shell
+    $ make worker
+    ```
+
+3. Start the development server
+
+    ```shell
+    $ make run
+    ```
 
 ## Development
 

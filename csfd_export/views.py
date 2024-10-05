@@ -19,12 +19,13 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def user_detail(request: HttpRequest, *, uid: int) -> HttpResponse:
-    cache_key = f"user:{uid}:result-id"
-    result_id = cache.get(cache_key)
+    result_id_cache_key = f"user:{uid}:result-id"
+    result_id = cache.get(result_id_cache_key)
     if result_id is None:
+        # TODO Quickly check if the user exists.
         result = scrape_user_ratings.delay(uid)
         result_id = result.id
-        cache.set(cache_key, result_id, 30 * 3600)
+        cache.set(result_id_cache_key, result_id, 30 * 3600)
     else:
         result = AsyncResult(result_id)
     if result.ready():

@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from csfd_export.scraper import DEFAULT_INTERVAL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT
+
 BASE_DIR = Path(__file__).resolve().parent
 
 SECRET_KEY = "django-insecure-egkq%!g9k8k*3ux-ti22-+^#zlcq(sxslyi&z78r+lxz%93ww8"
@@ -34,6 +36,13 @@ TEMPLATES = [
     },
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "unix:///run/user/1000/redis.sock",
+    }
+}
+
 TIME_ZONE = "UTC"
 
 USE_I18N = False
@@ -48,8 +57,9 @@ LOGGING = {
     "loggers": {"csfd_export": {"level": "INFO", "handlers": ["console"]}},
 }
 
-SCRAPER_INTERVAL = 1
-SCRAPER_TIMEOUT = 10
-SCRAPER_USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; rv:131.0) Gecko/20100101 Firefox/131.0"
-)
+SCRAPER_INTERVAL = DEFAULT_INTERVAL
+SCRAPER_TIMEOUT = DEFAULT_TIMEOUT
+SCRAPER_USER_AGENT = DEFAULT_USER_AGENT
+
+CELERY_BROKER = "redis+socket:///run/user/1000/redis.sock"
+CELERY_BACKEND = "redis+socket:///run/user/1000/redis.sock"
