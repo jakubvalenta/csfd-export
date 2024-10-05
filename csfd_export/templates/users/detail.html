@@ -12,7 +12,8 @@
       media="screen"
     />
     <style>
-      .js .noscript {
+      body.js .unless-js,
+      body:not(.js) .when-js {
         display: none;
       }
     </style>
@@ -21,7 +22,7 @@
     <div class="page">
       <main>
         <div class="container">
-          <div id="done">
+          <div id="done" {% if csv is None %} class="hidden" {% endif %}>
             <h2 class="border-success">Here is your ČSFD ratings export</h2>
             <p>
               Please note that if you add or change a rating on ČSFD now, it can
@@ -31,12 +32,12 @@
               <a
                 href="data:text/plain;charset=utf-8,{{ csv|iriencode }}"
                 download="csfd_export_{{ uid }}.csv"
-                class="button background-success border-success"
+                class="button background-success border-success when-js"
                 >Download as CSV</a
               >
               <button
                 onclick="navigator.clipboard.writeText(document.getElementById('csv').textContent).then()"
-                class="button background-success border-success"
+                class="button background-success border-success when-js"
               >
                 Copy to clipboard
               </button>
@@ -46,33 +47,13 @@
 {{ csv }}</pre
             >
           </div>
-          {% if not csv %}
-          <div id="loading">
-            <h2>Exporting your ČSFD ratings...</h2>
+          <div id="loading" {% if csv is not None %} class="hidden" {% endif %}>
+            <h2 class="border-dashed">Exporting your ČSFD ratings...</h2>
             <p>The spreadsheet will be ready in a minute.</p>
-            <a href="{% url 'user-detail' uid %}" class="noscript">Refresh</a>
-            <script>
-              document.getElementById('done').classList.add('hidden');
-              fetch('/api/users/{{ uid }}')
-                .then(res => {
-                  if (!res.ok) {
-                    // TODO Retry
-                    return;
-                  }
-                  res
-                    .text()
-                    .then(csv => {
-                      document.getElementById('csv').textContent = csv;
-                      document
-                        .getElementById('done')
-                        .classList.remove('hidden');
-                    })
-                    .catch(console.error);
-                })
-                .catch(console.error);
-            </script>
+            <a href="{% url 'user-detail' uid %}" class="button unless-js"
+              >Refresh</a
+            >
           </div>
-          {% endif %}
         </div>
       </main>
       <footer>
@@ -90,6 +71,27 @@
     </div>
     <script>
       document.body.classList.add('js');
+
+      if (document.getElementById('done').classList.contains('hidden')) {
+        const interval = setInterval(() => {
+          fetch("{% url 'api-user-detail' uid %}")
+            .then(res => {
+              if (!res.ok) {
+                return;
+              }
+              res
+                .text()
+                .then(csv => {
+                  document.getElementById('csv').textContent = csv;
+                  document.getElementById('loading').classList.add('hidden');
+                  document.getElementById('done').classList.remove('hidden');
+                })
+                .catch(console.error);
+              clearInterval(interval);
+            })
+            .catch(console.error);
+        }, 3000);
+      }
     </script>
   </body>
 </html>

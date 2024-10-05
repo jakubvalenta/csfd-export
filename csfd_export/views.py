@@ -18,7 +18,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(request, "index.html", {"form": form})
 
 
-def user_detail(request: HttpRequest, *, uid: int) -> HttpResponse:
+def _get_user_detail_csv(uid: int) -> str | None:
     result_id_cache_key = f"user:{uid}:result-id"
     result_id = cache.get(result_id_cache_key)
     if result_id is None:
@@ -33,4 +33,18 @@ def user_detail(request: HttpRequest, *, uid: int) -> HttpResponse:
     else:
         result.forget()
         csv_str = None
+    return csv_str
+
+
+def user_detail(request: HttpRequest, *, uid: int) -> HttpResponse:
+    csv_str = _get_user_detail_csv(uid)
     return render(request, "users/detail.html", {"csv": csv_str, "uid": uid})
+
+
+def api_user_detail(request: HttpRequest, *, uid: int) -> HttpResponse:
+    csv_str = _get_user_detail_csv(uid)
+    return HttpResponse(
+        csv_str,
+        status=200 if csv_str is not None else 404,
+        headers={"Content-Type": "text/csv"},
+    )
