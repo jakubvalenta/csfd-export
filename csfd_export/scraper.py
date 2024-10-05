@@ -20,7 +20,7 @@ class Rating:
     title_cs: str
     year: int
     watched_datetime: datetime.datetime
-    rating: int
+    rating: float
 
 
 def _http_get(url: str, timeout: int, user_agent: str) -> str:
@@ -78,11 +78,11 @@ def tag_or_none(val: Tag | NavigableString | None) -> Tag | None:
 STAR_CLASS_REGEX = re.compile(r"stars-(?P<rating>\d)")
 
 
-def parse_rating(star_classes: Iterable[str] | None) -> int:
+def parse_rating(star_classes: Iterable[str] | None) -> float:
     if star_classes:
         for star_class_ in star_classes:
             if star_class_ == "trash":
-                return 0
+                return 0.5  # Use 0.5, because that's the lowest possible rating on Letterboxd.
             m = STAR_CLASS_REGEX.match(star_class_)
             if m:
                 return int(m.group("rating"))

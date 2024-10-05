@@ -42,7 +42,7 @@ def test_parse_ratings_page():
         title_cs="Tenkrát v Hollywoodu",
         year=2019,
         watched_datetime=datetime.datetime(2021, 1, 30),
-        rating=0,
+        rating=0.5,
     )
 
 
