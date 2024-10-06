@@ -2,11 +2,10 @@ import argparse
 import logging
 import sys
 
-from django.conf import settings
-
 from csfd_export import __title__
 from csfd_export.scraper import (
-    download_ratings_pages, parse_ratings_pages, parse_uid, write_ratings_csv,
+    DEFAULT_INTERVAL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT, download_ratings_pages,
+    parse_ratings_pages, parse_uid, write_ratings_csv,
 )
 
 logger = logging.getLogger(__name__)
@@ -14,10 +13,13 @@ logger = logging.getLogger(__name__)
 
 def main():
     parser = argparse.ArgumentParser(prog=__title__)
-    parser.add_argument("profile_url", help="ČSFD profile URL")
+    parser.add_argument(
+        "profile_url",
+        help="ČSFD profile URL; example: https://www.csfd.cz/uzivatel/18708-polaroid/hodnoceni/",
+    )
     parser.add_argument(
         "output_csv",
-        help="Output CSV file path",
+        help="Output CSV file path; defaults to - which means standard output",
         nargs="?",
         type=argparse.FileType("w"),
         default=sys.stdout,
@@ -29,22 +31,22 @@ def main():
         "-i",
         "--interval",
         help="Number of seconds to wait between HTTP requests; "
-        f"defaults to {settings.SCRAPER_INTERVAL}",
+        f"defaults to {DEFAULT_INTERVAL}",
         type=int,
-        default=settings.SCRAPER_INTERVAL,
+        default=DEFAULT_INTERVAL,
     )
     parser.add_argument(
         "-t",
         "--timeout",
-        help=f"HTTP request timeout in seconds; defaults to {settings.SCRAPER_TIMEOUT}",
+        help=f"HTTP request timeout in seconds; defaults to {DEFAULT_TIMEOUT}",
         type=int,
-        default=settings.SCRAPER_TIMEOUT,
+        default=DEFAULT_TIMEOUT,
     )
     parser.add_argument(
         "-u",
         "--user-agent",
-        help=f"User-Agent header; defaults to {settings.SCRAPER_USER_AGENT}",
-        default=settings.SCRAPER_USER_AGENT,
+        help=f"User-Agent header; defaults to {DEFAULT_USER_AGENT}",
+        default=DEFAULT_USER_AGENT,
     )
     args = parser.parse_args()
     if args.verbose:
