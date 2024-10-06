@@ -8,11 +8,16 @@ from typing import IO, Iterable, Iterator
 
 import requests
 from bs4 import BeautifulSoup, NavigableString, Tag
+from requests import ConnectionError, HTTPError
 
 logger = logging.getLogger(__name__)
 
 
-class ParseError(Exception):
+class ScraperError(Exception):
+    pass
+
+
+class UserNotFoundError(Exception):
     pass
 
 
@@ -39,7 +44,7 @@ def parse_uid(profile_url: str) -> int:
     m = PROFILE_URL_REGEX.match(profile_url)
     if m:
         return int(m.group("uid"))
-    raise ParseError("Invalid profile URL")
+    raise ScraperError("Invalid profile URL")
 
 
 def _http_get(url: str, timeout: int, user_agent: str) -> str:
@@ -59,7 +64,7 @@ def parse_last_page_num(ratings_page: BeautifulSoup) -> int:
     if len(page_num_links):
         last_page_num_link = page_num_links[-1]
         if last_page_num_link.string is None:
-            raise ParseError("Failed to find last page number")
+            raise ScraperError("Failed to find last page number")
         last_page_num = int(last_page_num_link.string)
     else:
         last_page_num = 1
@@ -68,10 +73,17 @@ def parse_last_page_num(ratings_page: BeautifulSoup) -> int:
 
 
 def _download_ratings_page(uid: int, page_no: int, **http_get_kwargs) -> str:
-    return _http_get(
-        f"https://www.csfd.cz/uzivatel/{uid}-uzivatel/hodnoceni/?page={page_no}",
-        **http_get_kwargs,
-    )
+    try:
+        return _http_get(
+            f"https://www.csfd.cz/uzivatel/{uid}-uzivatel/hodnoceni/?page={page_no}",
+            **http_get_kwargs,
+        )
+    except ConnectionError:
+        raise ScraperError("Connection error")
+    except HTTPError as e:
+        if e.response.status_code == 404:
+            raise UserNotFoundError("User does not exist")
+        raise ScraperError("Response error")
 
 
 def download_ratings_pages(
@@ -105,7 +117,7 @@ def parse_rating(star_classes: Iterable[str] | None) -> float:
             m = STAR_CLASS_REGEX.match(star_class_)
             if m:
                 return int(m.group("rating"))
-    raise ParseError("Failed to parse rating")
+    raise ScraperError("Failed to parse rating")
 
 
 YEAR_REGEX = re.compile(r"\((?P<year>\d{4})\)")
@@ -116,7 +128,7 @@ def _parse_year(year_str: str | None) -> int:
         m = YEAR_REGEX.search(year_str)
         if m:
             return int(m.group("year"))
-    raise ParseError("Failed to parse year")
+    raise ScraperError("Failed to parse year")
 
 
 def _parse_watched_datetime(
@@ -130,7 +142,7 @@ def _parse_watched_datetime(
                 )
             except ValueError:
                 pass
-    raise ParseError("Failed to parse watched date")
+    raise ScraperError("Failed to parse watched date")
 
 
 def parse_ratings_page(ratings_page: BeautifulSoup) -> Iterator[Rating]:
@@ -140,7 +152,7 @@ def parse_ratings_page(ratings_page: BeautifulSoup) -> Iterator[Rating]:
         # TODO Scrape English title. Try to set language request headers.
         logger.info("Parsing %s", title_cs)
         if not title_cs:
-            raise ParseError("Failed to parse film title")
+            raise ScraperError("Failed to parse film title")
         info_el = tag_or_none(tr.select_one(".film-title-info .info"))
         year = _parse_year(info_el.string if info_el else None)
         date_el = tag_or_none(tr.find(class_="date-only"))

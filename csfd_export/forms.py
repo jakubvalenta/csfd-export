@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from csfd_export.scraper import ParseError, parse_uid
+from csfd_export.scraper import ScraperError, parse_uid
 
 
 class UserForm(forms.Form):
@@ -19,5 +19,5 @@ class UserForm(forms.Form):
     def clean_uid(self) -> int:
         try:
             return parse_uid(self.cleaned_data["uid"])
-        except ParseError as e:
+        except ScraperError as e:
             raise ValidationError(e)

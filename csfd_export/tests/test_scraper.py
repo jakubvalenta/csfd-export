@@ -5,7 +5,7 @@ import pytest
 from bs4 import BeautifulSoup
 
 from csfd_export.scraper import (
-    ParseError, Rating, parse_last_page_num, parse_rating, parse_ratings_page,
+    Rating, ScraperError, parse_last_page_num, parse_rating, parse_ratings_page,
 )
 
 soup_profile = BeautifulSoup(
@@ -18,9 +18,9 @@ def test_parse_star_classes():
     assert parse_rating(["star", "stars-5"]) == 5
     assert parse_rating(["star", "stars-1"]) == 1
     assert parse_rating(["star", "trash"]) == 0.5
-    with pytest.raises(ParseError):
+    with pytest.raises(ScraperError):
         parse_rating([])
-    with pytest.raises(ParseError):
+    with pytest.raises(ScraperError):
         parse_rating(["stars-x"])
 
 
