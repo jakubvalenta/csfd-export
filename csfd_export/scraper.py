@@ -36,7 +36,8 @@ DEFAULT_USER_AGENT = (
 )
 
 PROFILE_URL_REGEX = re.compile(
-    r"^\s*https?://(www\.)?csfd\.cz\/uzivatel\/(?P<uid>\d+)-"
+    r"^\s*(https?://)?(www\.)?(csfd|filmbooster)\.([a-z]{2,3})(\.[a-z]{2,3})?\/"
+    r"([a-z]+)\/(?P<uid>\d+)-"
 )
 
 
@@ -75,7 +76,7 @@ def parse_last_page_num(ratings_page: BeautifulSoup) -> int:
 def _download_ratings_page(uid: int, page_no: int, **http_get_kwargs) -> str:
     try:
         return _http_get(
-            f"https://www.csfd.cz/uzivatel/{uid}-uzivatel/hodnoceni/?page={page_no}",
+            f"https://www.filmbooster.co.uk/user/{uid}-polaroid/ratings/?page={page_no}",
             **http_get_kwargs,
         )
     except ConnectionError:
@@ -139,6 +140,12 @@ def _parse_watched_datetime(
             try:
                 return datetime.datetime.strptime(
                     watched_datetime_str.strip(), "%d.%m.%Y"
+                )
+            except ValueError:
+                pass
+            try:
+                return datetime.datetime.strptime(
+                    watched_datetime_str.strip(), "%d/%m/%Y"
                 )
             except ValueError:
                 pass
