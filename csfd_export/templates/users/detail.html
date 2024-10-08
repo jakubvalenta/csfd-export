@@ -59,6 +59,7 @@
           <div id="error" {% if not error_message %} class="hidden" {% endif %}>
             <h2 class="border-error">Error</h2>
             <p id="error-message">{{ error_message }}</p>
+            <p><a href="{% url 'index' %}" class="button">Go back</a></p>
           </div>
         </div>
       </main>
@@ -118,7 +119,9 @@
         }
 
         const interval = setInterval(() => {
-          fetch("{% url 'api-user-detail' uid %}")
+          fetch("{% url 'user-detail' uid %}", {
+            headers: { Accept: 'text/csv' }
+          })
             .then(res => {
               if (res.status === 200) {
                 res
