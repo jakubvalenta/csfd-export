@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from csfd_export.scraper import ScraperError, parse_uid
+from csfd_export.scraper import EXAMPLE_PROFILE_URL, ScraperError, parse_uid
 
 
 class UserForm(forms.Form):
@@ -10,7 +10,7 @@ class UserForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": "box flex-grow mr-1",
-                "placeholder": "https://www.csfd.cz/uzivatel/18708-polaroid/hodnoceni/",
+                "placeholder": EXAMPLE_PROFILE_URL,
             }
         ),
         required=True,

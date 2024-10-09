@@ -4,8 +4,8 @@ import sys
 
 from csfd_export import __title__
 from csfd_export.scraper import (
-    DEFAULT_INTERVAL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT, download_ratings_pages,
-    parse_ratings_pages, parse_uid, write_ratings_csv,
+    DEFAULT_INTERVAL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT, EXAMPLE_PROFILE_URL,
+    download_ratings_pages, parse_ratings_pages, parse_uid, write_ratings_csv,
 )
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(prog=__title__)
     parser.add_argument(
         "profile_url",
-        help="ČSFD profile URL; example: https://www.csfd.cz/uzivatel/18708-polaroid/hodnoceni/",
+        help=f"ČSFD profile URL; example: {EXAMPLE_PROFILE_URL}",
     )
     parser.add_argument(
         "output_csv",
