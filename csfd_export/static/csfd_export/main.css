@@ -129,6 +129,9 @@ pre {
 pre {
     overflow: hidden;
 }
+code {
+    font-family: monospace;
+}
 form {
     margin: 2em 0;
 }

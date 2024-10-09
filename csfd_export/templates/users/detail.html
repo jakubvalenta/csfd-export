@@ -26,8 +26,8 @@
           <div id="done" {% if loading or error_message %} class="hidden" {% endif %}>
             <h2 class="border-success">Here is your ČSFD ratings export</h2>
             <p>
-              Please note that if you add or change a rating on ČSFD now, it can
-              take up to 1h before it appears in the next export.
+              Please note that if you rate a new film on ČSFD now, it can take
+              up to 1h before the rating appears in the export.
             </p>
             <p>
               <a
@@ -50,7 +50,7 @@
           </div>
           <!-- prettier-ignore -->
           <div id="loading" {% if not loading or error_message %} class="hidden" {% endif %}>
-            <h2 class="border-dashed">Exporting your ČSFD ratings...</h2>
+            <h2 class="border-dashed">Exporting your ČSFD ratings<code id="spinner"></code></h2>
             <p>The spreadsheet will be ready in a minute.</p>
             <a href="{% url 'user-detail' uid %}" class="button unless-js"
               >Refresh</a
@@ -85,6 +85,7 @@
         const errorEl = document.getElementById('error');
         const errorMessageEl = document.getElementById('error-message');
         const loadingEl = document.getElementById('loading');
+        const spinnerEl = document.getElementById('spinner');
 
         function show(el) {
           el.classList.remove(CLASS_HIDDEN);
@@ -113,6 +114,13 @@
         }
 
         document.body.classList.add('js');
+
+        const frames = ['.  ', '.. ', '...', ' ..', '  .', '   '];
+        var i = 0;
+        setInterval(function () {
+          spinnerEl.innerHTML = frames[i];
+          i = (i + 1) % frames.length;
+        }, 300);
 
         if (isVisible(doneEl)) {
           return;
