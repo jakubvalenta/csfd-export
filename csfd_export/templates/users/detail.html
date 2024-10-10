@@ -33,6 +33,7 @@
               <a
                 href="data:text/plain;charset=utf-8,{{ csv|iriencode }}"
                 download="csfd_export_{{ uid }}.csv"
+                id="download"
                 class="button background-success border-success when-js"
                 >Download as CSV</a
               >
@@ -82,6 +83,7 @@
 
         const csvEl = document.getElementById('csv');
         const doneEl = document.getElementById('done');
+        const downloadEl = document.getElementById('download');
         const errorEl = document.getElementById('error');
         const errorMessageEl = document.getElementById('error-message');
         const loadingEl = document.getElementById('loading');
@@ -101,6 +103,10 @@
 
         function setCsv(csv) {
           csvEl.textContent = csv;
+          downloadEl.setAttribute(
+            'href',
+            'data:text/plain;charset=utf-8,' + encodeURIComponent(csv)
+          );
           hide(errorEl);
           hide(loadingEl);
           show(doneEl);
