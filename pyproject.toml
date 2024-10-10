@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "csfd-export"
-version = "1.0.0"
+version = "1.0.1"
 description = "A website that allows you to export your ČSFD film ratings."
 authors = ["Jakub Valenta <jakub@jakubvalenta.cz>"]
 license = "GPLv3+"
