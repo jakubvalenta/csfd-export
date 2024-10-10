@@ -14,7 +14,7 @@ from csfd_export.tasks import scrape_user_ratings
 logger = logging.getLogger(__name__)
 
 
-@ratelimit(key="ip", rate="60/h", method=["POST"])
+@ratelimit(key="header:x-real-ip", rate="60/h", method=["POST"])
 def index(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = UserForm(request.POST)
