@@ -2,8 +2,8 @@
 
 Export your film ratings as a spreadsheet file.
 
-The resulting file is a CSV that can be
-[https://letterboxd.com/about/importing-data/](imported to Letterboxd).
+The resulting file is a CSV that can be [imported to
+Letterboxd](https://letterboxd.com/about/importing-data/).
 
 You can find the app at [csfd-export.ooooo.page](https://csfd-export.ooooo.page).
 
@@ -15,7 +15,7 @@ You can find the app at [csfd-export.ooooo.page](https://csfd-export.ooooo.page)
 
 2. Install ČSFD Export as a pip package:
 
-    ``` shell
+    ```shell
     $ pip install --user --upgrade .
     ```
 
@@ -45,7 +45,7 @@ Tenkrát v Hollywoodu,2019,0.5,2021-01-30
 
 See all command line options:
 
-``` shell
+```shell
 $ csfd-export --help
 ```
 
