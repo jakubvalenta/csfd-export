@@ -5,7 +5,12 @@ import pytest
 from bs4 import BeautifulSoup
 
 from csfd_export.scraper import (
-    Rating, ScraperError, parse_last_page_num, parse_rating, parse_ratings_page, parse_uid,
+    Rating,
+    ScraperError,
+    parse_last_page_num,
+    parse_rating,
+    parse_ratings_page,
+    parse_uid,
 )
 
 hodnoceni_soup = BeautifulSoup(
@@ -20,17 +25,9 @@ ratings_soup = BeautifulSoup(
 
 def test_parse_uid():
     assert parse_uid("https://www.csfd.sk/uzivatel/18708-polaroid/hodnotenia/") == 18708
-    assert (
-        parse_uid("https://www.filmbooster.co.uk/user/18708-polaroid/ratings/") == 18708
-    )
-    assert (
-        parse_uid("https://www.filmbooster.com.au/user/18708-polaroid/ratings/")
-        == 18708
-    )
-    assert (
-        parse_uid("https://www.filmbooster.de/nutzer/18708-polaroid/bewertungen/")
-        == 18708
-    )
+    assert parse_uid("https://www.filmbooster.co.uk/user/18708-polaroid/ratings/") == 18708
+    assert parse_uid("https://www.filmbooster.com.au/user/18708-polaroid/ratings/") == 18708
+    assert parse_uid("https://www.filmbooster.de/nutzer/18708-polaroid/bewertungen/") == 18708
     assert parse_uid("https://www.csfd.cz/uzivatel/18708-polaroid") == 18708
     assert parse_uid("https://www.csfd.cz/uzivatel/18708-polaroid/") == 18708
     assert parse_uid("https://www.csfd.cz/uzivatel/18708-polaroid/prehled/") == 18708

@@ -31,9 +31,7 @@ class Rating:
 
 DEFAULT_INTERVAL = 1
 DEFAULT_TIMEOUT = 10
-DEFAULT_USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; rv:131.0) Gecko/20100101 Firefox/131.0"
-)
+DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:131.0) Gecko/20100101 Firefox/131.0"
 
 EXAMPLE_PROFILE_URL = "https://www.csfd.cz/uzivatel/18708-polaroid/hodnoceni/"
 
@@ -140,15 +138,11 @@ def _parse_watched_datetime(
     if watched_datetime_strings:
         for watched_datetime_str in watched_datetime_strings:
             try:
-                return datetime.datetime.strptime(
-                    watched_datetime_str.strip(), "%d.%m.%Y"
-                )
+                return datetime.datetime.strptime(watched_datetime_str.strip(), "%d.%m.%Y")
             except ValueError:
                 pass
             try:
-                return datetime.datetime.strptime(
-                    watched_datetime_str.strip(), "%d/%m/%Y"
-                )
+                return datetime.datetime.strptime(watched_datetime_str.strip(), "%d/%m/%Y")
             except ValueError:
                 pass
     raise ScraperError("Failed to parse watched date")

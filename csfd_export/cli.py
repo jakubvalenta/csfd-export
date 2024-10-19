@@ -4,8 +4,14 @@ import sys
 
 from csfd_export import __title__
 from csfd_export.scraper import (
-    DEFAULT_INTERVAL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT, EXAMPLE_PROFILE_URL,
-    download_ratings_pages, parse_ratings_pages, parse_uid, write_ratings_csv,
+    DEFAULT_INTERVAL,
+    DEFAULT_TIMEOUT,
+    DEFAULT_USER_AGENT,
+    EXAMPLE_PROFILE_URL,
+    download_ratings_pages,
+    parse_ratings_pages,
+    parse_uid,
+    write_ratings_csv,
 )
 
 logger = logging.getLogger(__name__)
@@ -24,14 +30,11 @@ def main():
         type=argparse.FileType("w"),
         default=sys.stdout,
     )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Enable debugging output"
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable debugging output")
     parser.add_argument(
         "-i",
         "--interval",
-        help="Number of seconds to wait between HTTP requests; "
-        f"defaults to {DEFAULT_INTERVAL}",
+        help=f"Number of seconds to wait between HTTP requests; defaults to {DEFAULT_INTERVAL}",
         type=int,
         default=DEFAULT_INTERVAL,
     )

@@ -6,9 +6,7 @@ from csfd_export.settings import *  # noqa: F401, F403
 ALLOWED_HOSTS = [os.environ["ALLOWED_HOST"]]
 DEBUG = False
 SECRET_KEY = (
-    Path(os.environ.get("SECRET_KEY_FILE", "/run/keys/csfd-export-secret-key"))
-    .read_text()
-    .strip()
+    Path(os.environ.get("SECRET_KEY_FILE", "/run/keys/csfd-export-secret-key")).read_text().strip()
 )
 CACHES = {
     "default": {
