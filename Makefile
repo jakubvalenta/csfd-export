@@ -17,16 +17,16 @@ redis:  ## Start the Redis message broker
 setup:  ## Install Python dependencies
 	poetry install
 
-.PHONE: test
+.PHONY: test
 test:  ## Test Python code
 	poetry run pytest $(_python_pkg)
 
-.PHONE: lint
+.PHONY: lint
 lint:  ## Lint Python code
 	poetry run ruff check $(_python_pkg)
 	poetry run mypy $(_python_pkg)
 
-.PHONE: format
+.PHONY: format
 format:  ## Format Python code
 	poetry run ruff format $(_python_pkg)
 
