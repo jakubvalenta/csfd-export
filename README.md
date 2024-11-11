@@ -115,7 +115,7 @@ $ make test
 $ make lint
 ```
 
-### Test Help
+### Help
 
 ```shell
 $ make help
