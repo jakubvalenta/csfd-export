@@ -20,4 +20,4 @@ class UserForm(forms.Form):
         try:
             return parse_uid(self.cleaned_data["uid"])
         except ScraperError as e:
-            raise ValidationError(e)
+            raise ValidationError(e.args[0])

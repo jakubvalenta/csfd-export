@@ -15,11 +15,23 @@ django = "^5.0.9"
 requests = "^2.31.0"
 
 [tool.poetry.group.dev.dependencies]
+celery-types = "^0.22.0"
+django-stubs = {version = "^5.0.4", extras = ["compatible-mypy"]}
 mypy = "^1.11.2"
 pytest = "^8.3.3"
 types-beautifulsoup4 = "^4.12.0.20240907"
 types-requests = "^2.31.0"
 ruff = "^0.7.0"
+
+[tool.django-stubs]
+django_settings_module = "csfd_export.settings"
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+
+[[tool.mypy.overrides]]
+module = ["django_ratelimit.decorators"]
+ignore_missing_imports = true
 
 [tool.poetry.scripts]
 csfd-export = "csfd_export.cli:main"

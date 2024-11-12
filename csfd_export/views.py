@@ -39,7 +39,7 @@ def user_detail(request: HttpRequest, uid: int) -> HttpResponse:
     result_id_cache_key = f"user:{uid}:result-id"
     result_id = cache.get(result_id_cache_key)
     if result_id is not None:
-        result = AsyncResult(result_id)
+        result: AsyncResult = AsyncResult(result_id)
         if result.ready():
             try:
                 csv = result.get()
