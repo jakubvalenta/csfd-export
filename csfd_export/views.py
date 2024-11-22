@@ -13,6 +13,8 @@ from csfd_export.tasks import scrape_user_ratings
 
 logger = logging.getLogger(__name__)
 
+CACHE_TTL_MIN = 60
+
 
 @ratelimit(key="header:x-real-ip", rate="60/h", method=["POST"])
 def index(request: HttpRequest) -> HttpResponse:
@@ -25,7 +27,7 @@ def index(request: HttpRequest) -> HttpResponse:
                 # Run the task here, so that we can apply ratelimiting to scraping (POST view) while
                 # not applying it to the checking of results (GET view).
                 result = scrape_user_ratings.delay(uid)
-                cache.set(result_id_cache_key, result.id, 3600)
+                cache.set(result_id_cache_key, result.id, CACHE_TTL_MIN * 60)
             return redirect(reverse("user-detail", args=[uid]))
     else:
         form = UserForm()
@@ -53,13 +55,14 @@ def user_detail(request: HttpRequest, uid: int) -> HttpResponse:
             result.forget()
             status = 201
     else:
-        error_message = "Use the form please"
+        error_message = f"The exported spreadsheet expired after {CACHE_TTL_MIN} min."
         status = 403
     if request.accepts("text/html"):
         return render(
             request,
             "users/detail.html",
             {
+                "CACHE_TTL_MIN": CACHE_TTL_MIN,
                 "csv": csv,
                 "error_message": error_message,
                 "loading": status == 201,

@@ -27,7 +27,7 @@
             <h2 class="border-success">Here is your ČSFD ratings export</h2>
             <p>
               Please note that if you rate a new film on ČSFD now, it can take
-              up to 1h before the rating appears in the export.
+              up to {{ CACHE_TTL_MIN }} min before the rating appears in the export.
             </p>
             <p>
               <a
@@ -43,7 +43,7 @@
               >
                 Copy to clipboard
               </button>
-              <a href="{% url 'index' %}" class="button">Go back</a>
+              <a href="{% url 'index' %}" class="button">New export</a>
             </p>
             <pre id="csv" class="box background-muted flex-grow mr-1-desktop">
 {{ csv }}</pre
@@ -65,7 +65,7 @@
           <div id="error" {% if not error_message %} class="hidden" {% endif %}>
             <h2 class="border-error">Error</h2>
             <p id="error-message">{{ error_message }}</p>
-            <p><a href="{% url 'index' %}" class="button">Go back</a></p>
+            <p><a href="{% url 'index' %}" class="button">New export</a></p>
           </div>
         </div>
       </main>
