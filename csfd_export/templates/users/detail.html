@@ -18,7 +18,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-user-detail-url="{% url 'user-detail' uid %}">
     <div class="page">
       <main>
         <div class="container">
@@ -56,7 +56,8 @@
           <!-- prettier-ignore -->
           <div id="loading" {% if not loading or error_message %} class="hidden" {% endif %}>
             <h2 class="border-dashed">Exporting your ČSFD ratings<code id="spinner"></code></h2>
-            <p>The spreadsheet will be ready in a minute.</p>
+            <p>The spreadsheet will be ready soon.</p>
+            <p>Current export speed is roughly 2000 ratings per minute.</p>
             <a href="{% url 'user-detail' uid %}" class="button unless-js"
               >Refresh</a
             >
@@ -81,93 +82,6 @@
         >
       </footer>
     </div>
-    <script>
-      (() => {
-        const CLASS_HIDDEN = 'hidden';
-
-        const csvEl = document.getElementById('csv');
-        const doneEl = document.getElementById('done');
-        const downloadEl = document.getElementById('download');
-        const errorEl = document.getElementById('error');
-        const errorMessageEl = document.getElementById('error-message');
-        const loadingEl = document.getElementById('loading');
-        const spinnerEl = document.getElementById('spinner');
-
-        function show(el) {
-          el.classList.remove(CLASS_HIDDEN);
-        }
-
-        function hide(el) {
-          el.classList.add(CLASS_HIDDEN);
-        }
-
-        function isVisible(el) {
-          return !el.classList.contains(CLASS_HIDDEN);
-        }
-
-        function setCsv(csv) {
-          csvEl.textContent = csv;
-          downloadEl.setAttribute(
-            'href',
-            'data:text/plain;charset=utf-8,' + encodeURIComponent(csv)
-          );
-          hide(errorEl);
-          hide(loadingEl);
-          show(doneEl);
-        }
-
-        function setErrorMessage(errorMessage) {
-          errorMessageEl.textContent = errorMessage;
-          hide(doneEl);
-          hide(loadingEl);
-          show(errorEl);
-        }
-
-        document.body.classList.add('js');
-
-        const frames = ['.  ', '.. ', '...', ' ..', '  .', '   '];
-        var i = 0;
-        setInterval(function () {
-          spinnerEl.innerHTML = frames[i];
-          i = (i + 1) % frames.length;
-        }, 300);
-
-        if (isVisible(doneEl)) {
-          return;
-        }
-
-        const interval = setInterval(() => {
-          fetch("{% url 'user-detail' uid %}", {
-            headers: { Accept: 'text/csv' }
-          })
-            .then(res => {
-              if (res.status === 200) {
-                res
-                  .text()
-                  .then(csv => setCsv(csv))
-                  .catch(console.error);
-                clearInterval(interval);
-              } else if (res.status === 201) {
-                // Retry.
-              } else {
-                res
-                  .text()
-                  .then(errorMessage =>
-                    setErrorMessage(
-                      res.headers.get('Content-Type') === 'text/csv'
-                        ? errorMessage
-                        : 'Unknown error'
-                    )
-                  )
-                  .catch(console.error);
-              }
-            })
-            .catch(logMessage => {
-              console.error(logMessage);
-              setErrorMessage('Connection error');
-            });
-        }, 3000);
-      })();
-    </script>
+    <script src="{% static 'csfd_export/main.js' %}"></script>
   </body>
 </html>
