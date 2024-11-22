@@ -61,19 +61,19 @@ def test_parse_star_classes():
 def test_parse_ratings_page():
     films = list(parse_ratings_page(hodnoceni_soup))
     assert films[0] == Rating(
-        title_cs="The Matrix Resurrections",
+        title="The Matrix Resurrections",
         year=2021,
         watched_datetime=datetime.datetime(2021, 12, 29),
         rating=2,
     )
     assert films[32] == Rating(
-        title_cs="The Power of Nightmares",
+        title="The Power of Nightmares",
         year=2004,
         watched_datetime=datetime.datetime(2021, 4, 24),
         rating=5,
     )
     assert films[-1] == Rating(
-        title_cs="Tenkrát v Hollywoodu",
+        title="Tenkrát v Hollywoodu",
         year=2019,
         watched_datetime=datetime.datetime(2021, 1, 30),
         rating=0.5,
@@ -83,19 +83,19 @@ def test_parse_ratings_page():
 def test_parse_ratings_page_english():
     films = list(parse_ratings_page(ratings_soup))
     assert films[0] == Rating(
-        title_cs="Game of Thrones",
+        title="Game of Thrones",
         year=2011,
         watched_datetime=datetime.datetime(2012, 3, 23),
         rating=3,
     )
     assert films[16] == Rating(
-        title_cs="Brüno",
+        title="Brüno",
         year=2009,
         watched_datetime=datetime.datetime(2011, 12, 10),
         rating=0.5,
     )
     assert films[-1] == Rating(
-        title_cs="Justice : Stress",
+        title="Justice : Stress",
         year=2008,
         watched_datetime=datetime.datetime(2010, 11, 28),
         rating=1,

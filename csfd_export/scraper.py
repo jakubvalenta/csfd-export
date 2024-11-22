@@ -23,7 +23,7 @@ class UserNotFoundError(Exception):
 
 @dataclass
 class Rating:
-    title_cs: str
+    title: str
     year: int
     watched_datetime: datetime.datetime
     rating: float
@@ -151,10 +151,9 @@ def _parse_watched_datetime(
 def parse_ratings_page(ratings_page: BeautifulSoup) -> Iterator[Rating]:
     for tr in ratings_page.select(".box-user-rating tr"):
         a_el = tag_or_none(tr.find(class_="film-title-name"))
-        title_cs = a_el and a_el.string
-        # TODO Scrape English title. Try to set language request headers.
-        logger.info("Parsing %s", title_cs)
-        if not title_cs:
+        title = a_el and a_el.string
+        logger.info("Parsing %s", title)
+        if not title:
             raise ScraperError("Failed to parse film title")
         info_el = tag_or_none(tr.select_one(".film-title-info .info"))
         year = _parse_year(info_el.string if info_el else None)
@@ -163,7 +162,7 @@ def parse_ratings_page(ratings_page: BeautifulSoup) -> Iterator[Rating]:
         stars_el = tag_or_none(tr.find(class_="stars"))
         rating = parse_rating(stars_el["class"] if stars_el else None)
         film = Rating(
-            title_cs=title_cs,
+            title=title,
             year=year,
             watched_datetime=watched_datetime,
             rating=rating,
@@ -182,7 +181,7 @@ def write_ratings_csv(ratings: Iterable[Rating], f: IO) -> None:
     for rating in ratings:
         writer.writerow(
             [
-                rating.title_cs,
+                rating.title,
                 rating.year,
                 rating.rating,
                 rating.watched_datetime.strftime("%Y-%m-%d"),
