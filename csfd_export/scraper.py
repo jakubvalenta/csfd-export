@@ -31,7 +31,7 @@ class Rating:
 
 DEFAULT_INTERVAL = 1
 DEFAULT_TIMEOUT = 10
-DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:131.0) Gecko/20100101 Firefox/131.0"
+DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:149.0) Gecko/20100101 Firefox/149.0"
 
 EXAMPLE_PROFILE_URL = "https://www.csfd.cz/uzivatel/18708-polaroid/hodnoceni/"
 
@@ -60,7 +60,14 @@ def _http_get(url: str, timeout: int, user_agent: str) -> str:
 
 
 def parse_last_page_num(ratings_page: BeautifulSoup) -> int:
-    page_links = ratings_page.select(".box-user-rating .pagination a")
+    page_links = ratings_page.select(
+        ",".join(
+            [
+                ".user-tab-rating .pagination a",  # 2026 version
+                ".box-user-rating .pagination a",  # 2024 version
+            ]
+        )
+    )
     page_num_links = [node for node in page_links if not node.get("class")]
     if len(page_num_links):
         last_page_num_link = page_num_links[-1]
@@ -121,7 +128,7 @@ def parse_rating(star_classes: Iterable[str] | None) -> float:
     raise ScraperError("Failed to parse rating")
 
 
-YEAR_REGEX = re.compile(r"\((?P<year>\d{4})\)")
+YEAR_REGEX = re.compile(r"\(?(?P<year>\d{4})\)?")  # Parentheses appear only in 2024 version
 
 
 def _parse_year(year_str: str | None) -> int:
@@ -149,7 +156,14 @@ def _parse_watched_datetime(
 
 
 def parse_ratings_page(ratings_page: BeautifulSoup) -> Iterator[Rating]:
-    for tr in ratings_page.select(".box-user-rating tr"):
+    for tr in ratings_page.select(
+        ",".join(
+            [
+                ".user-tab-rating tr",  # 2026 version
+                ".box-user-rating tr",  # 2024 version
+            ]
+        )
+    ):
         a_el = tag_or_none(tr.find(class_="film-title-name"))
         title = a_el and a_el.string
         logger.info("Parsing %s", title)

@@ -13,12 +13,16 @@ from csfd_export.scraper import (
     parse_uid,
 )
 
-hodnoceni_soup = BeautifulSoup(
-    (Path(__file__).parent / "test_data" / "hodnoceni.html").read_text(),
+hodnoceni_2026_soup = BeautifulSoup(
+    (Path(__file__).parent / "test_data" / "hodnoceni-2026.html").read_text(),
     "html.parser",
 )
-ratings_soup = BeautifulSoup(
-    (Path(__file__).parent / "test_data" / "ratings.html").read_text(),
+hodnoceni_2024_soup = BeautifulSoup(
+    (Path(__file__).parent / "test_data" / "hodnoceni-2024.html").read_text(),
+    "html.parser",
+)
+ratings_2024_soup = BeautifulSoup(
+    (Path(__file__).parent / "test_data" / "ratings-2024.html").read_text(),
     "html.parser",
 )
 
@@ -58,8 +62,30 @@ def test_parse_star_classes():
         parse_rating(["stars-x"])
 
 
-def test_parse_ratings_page():
-    films = list(parse_ratings_page(hodnoceni_soup))
+def test_parse_ratings_page_2026_czech():
+    films = list(parse_ratings_page(hodnoceni_2026_soup))
+    assert films[0] == Rating(
+        title="Tonoucí se stébla chytá",
+        year=1967,
+        watched_datetime=datetime.datetime(2022, 7, 16),
+        rating=2,
+    )
+    assert films[32] == Rating(
+        title="Naprostí cizinci",
+        year=2016,
+        watched_datetime=datetime.datetime(2021, 12, 20),
+        rating=4,
+    )
+    assert films[-1] == Rating(
+        title="Ryba jménem Wanda",
+        year=1988,
+        watched_datetime=datetime.datetime(2021, 9, 7),
+        rating=2,
+    )
+
+
+def test_parse_ratings_page_2024_czech():
+    films = list(parse_ratings_page(hodnoceni_2024_soup))
     assert films[0] == Rating(
         title="The Matrix Resurrections",
         year=2021,
@@ -80,8 +106,8 @@ def test_parse_ratings_page():
     )
 
 
-def test_parse_ratings_page_english():
-    films = list(parse_ratings_page(ratings_soup))
+def test_parse_ratings_page_2024_english():
+    films = list(parse_ratings_page(ratings_2024_soup))
     assert films[0] == Rating(
         title="Game of Thrones",
         year=2011,
@@ -103,5 +129,6 @@ def test_parse_ratings_page_english():
 
 
 def test_parse_last_page_num():
-    assert parse_last_page_num(hodnoceni_soup) == 24
-    assert parse_last_page_num(ratings_soup) == 27
+    assert parse_last_page_num(hodnoceni_2026_soup) == 27
+    assert parse_last_page_num(hodnoceni_2024_soup) == 24
+    assert parse_last_page_num(ratings_2024_soup) == 27
