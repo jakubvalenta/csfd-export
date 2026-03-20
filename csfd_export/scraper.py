@@ -82,10 +82,15 @@ def parse_last_page_num(ratings_page: BeautifulSoup) -> int:
 
 def _download_ratings_page(uid: int, page_no: int, **http_get_kwargs) -> str:
     try:
-        return _http_get(
+        text = _http_get(
             f"https://www.filmbooster.co.uk/user/{uid}-user/ratings/?page={page_no}",
             **http_get_kwargs,
         )
+        if text.startswith(
+            """<!doctype html><html lang="en"><head><title>Making sure you&#39;re not a bot"""
+        ):
+            raise ScraperError("Blocked by ČSFD")
+        return text
     except ConnectionError:
         raise ScraperError("Connection error")
     except HTTPError as e:
